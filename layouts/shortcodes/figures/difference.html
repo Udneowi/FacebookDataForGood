@@ -1,0 +1,348 @@
+<!-- CSS -->
+<!-- --- -->
+<style type="text/css">
+	input.diff[type=radio] {
+		position: absolute;
+		visibility: hidden;
+		display: none;
+	}
+
+	label.diff {
+		color: #222222;
+		display: inline-block;
+		font-size: 12px;
+		font-weight: 500;
+		padding: 0px 5px 0px 5px;
+	}
+
+	input.diff[type=radio]:checked + label.diff{
+		color: #ffffff;
+		background: #555555;
+		cursor: pointer;
+	}
+
+	label.diff + input.diff[type=radio] + label.diff {
+		border-left: solid 1px #999999;
+		cursor: pointer;
+	}
+</style>
+
+<!-- HTML -->
+<!-- ---- -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Div that SVG objects are appended to -->
+<div class="flex">
+	<div class="flex radio-group">
+		<input class="diff" onclick="instance_diff.update0()" type="radio" id="option-zero-diff" name="selector-diff" checked>
+		<label class="diff" for="option-zero-diff">All day</label>
+		<input class="diff" onclick="instance_diff.update2()" type="radio" id="option-two-diff" name="selector-diff">
+		<label class="diff" for="option-two-diff">10–18</label>
+		<input class="diff" onclick="instance_diff.update3()" type="radio" id="option-three-diff" name="selector-diff">
+		<label class="diff" for="option-three-diff">18–02</label>
+	</div>
+	<div class="select-place">
+		<select id="placeDiff">
+			<option value="country" selected="selected">Within country</option>
+			<option value="Region Hovedstaden">Within Hovedstaden</option>
+			<option value="Region Midtjylland">Within Midtjylland</option>
+			<option value="Region Nordjylland">Within Nordjylland</option>
+			<option value="Region Sjælland">Within Sjælland</option>
+			<option value="Region Syddanmark">Within Syddanmark</option>
+		</select>
+	</div>
+</div>
+<div class='vis' id='vis-diff'></div>
+
+<!-- JavaScript -->
+<!-- ---------- -->
+
+<!-- Imports -->
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<!-- Code -->
+<script>
+
+	function diffvis() {
+
+		// Globals //
+		// ------- //
+
+		let data, time;
+		let timeframe = "allday",
+			place = "country";
+
+
+		// ----- //
+		// Setup //
+		// ----- //
+
+		// Dimensions and margins
+		let maindiv = document.getElementById("vis-diff")
+		let width = maindiv.offsetWidth - margin.left - margin.right,
+			height = figureHeight - margin.top - margin.bottom;
+
+		// Set the ranges
+		let x = d3.scaleTime().range([0, width]);
+		let y = d3.scaleLinear().range([height, 0]);
+
+		// Define the axes
+		let formatPercent = d3.format(".0%");
+		let xAxis = d3.axisBottom(x);
+		let yAxis = d3.axisLeft(y).tickFormat(formatPercent).ticks(6, ".0%");
+
+		// Define the line
+		let valueline = d3.line()
+			.x(function(d) { return x(d[0]); })
+			.y(function(d) { return y(d[1]); });
+
+		// Adds the svg canvas
+		let svg = d3.select("#vis-diff")
+			.append("svg")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+			.append("g")
+				.attr("transform", 
+						"translate(" + margin.left + "," + margin.top + ")");
+
+		// TITLE
+		svg.append("text")
+			.attr("x", width/2)
+			.attr("y", -15)
+			.style("text-anchor", "middle")
+			.style("font-weight", 700)
+			.text("Share of population relocated");
+
+		// Y LABEL
+		svg.append("text")
+			.attr("transform", "rotate(-90)")
+			.attr("y", -40)
+			.attr("x", -height / 2)
+			.style("text-anchor", "middle")
+			.style("font-weight", 500)
+			.text("Share of population");
+
+		// Start the visualization //
+		// ----------------------- //
+		d3.json("/data/Denmark_difference.json").then(function(data_) {
+
+			// DATA
+			data = data_;
+
+			// TIME
+			time = data._meta.datetime.map(d => parseDate(d));
+			let dt = d3.max(time);
+			let d0 = parseDate(startDate);
+			let n_days = (dt - d0 + 3.6e6) / 86.4e6
+			let time_shown = d3.range(n_days+1).map(n => d0.addDays(n));
+
+			// SCALE
+			let yrange = [0, 0.13]
+			x.domain(d3.extent(time_shown));
+			y.domain(yrange);
+
+			// WEEKEND SHADES
+			let idxwknd = d3.range(4, time_shown.length, 7);
+			let dx = x(time[2]) - x(time[0]);
+			let dy = y(yrange[0]) - y(yrange[1]);
+
+			svg.selectAll('shade')
+				.data(idxwknd).enter().append("rect")
+				.attr("class", "shade")
+				.attr("x", d => {
+					return d == 0 ? x(time_shown[d]) : x(time_shown[d]) - dx/4
+				})
+				.attr("y", d => y(yrange[1]))
+				.attr("width", d => {
+					if (d == 0 | d == time_shown.length - 2) {
+						return dx * 3/4;
+					} else if (d == time_shown.length - 1) {
+						return dx * 1/4;
+					} else {
+						return dx;
+					}
+				})
+				.attr("height", dy)
+				.style('fill', '#ecf0f1')
+				.style('fill-opacity', 1)
+
+			// X-AXiS
+			svg.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis);
+
+			// NO DATA SHADE
+			svg.append('rect')
+				.attr('x', x(time_shown[0]))
+				.attr('y', y(yrange[1]))
+				.attr('width', x(time[0]) - x(time_shown[0]))
+				.attr('height', dy)
+				.attr('fill', 'url(#lines)')
+				.attr('stroke-width', 1.5)
+				.attr('fill-opacity', 0.2)
+			svg.append('text')
+				.attr('x', 10)
+				.attr('y', 20)
+				.style("font-weight", 0)
+				.style("font-size", "12px")
+				.text('NO DATA')
+
+			// EVENT LINES
+			for (let d of eventDates) {  // eventLinesDates is defined in globals.html
+				svg.append('line')
+					.attr('class', 'histEvent')
+					.attr('id', d[2] + "diff")
+					.attr('x1', x(parseDate(d[0])))
+					.attr('x2', x(parseDate(d[0])))
+					.attr('y1', height)
+					.attr('y2', height)
+				svg.append('circle')
+					.attr('class', 'histEventDot')
+					.attr('cx', x(parseDate(d[0])))
+					.attr('cy', height)
+					.attr('r', 3)
+					.on('mouseover', mouseover)
+					.on('mousemove', () => {
+						mousemoveHistEvent(d);
+						d3.select("#" + d[2] + "diff").attr('y2', 0)
+					})
+					.on('mouseout', () => {
+						mouseout();
+						d3.select("#" + d[2] + "diff").attr('y2', height)
+					})
+			}
+
+			// LEGENDS
+			svg.append('line')
+				.attr('class', 'line')
+				.attr('x1', width+10)
+				.attr('x2', width+30)
+				.attr('y1', 10)
+				.attr('y2', 10)
+			svg.append('circle')
+				.attr('class', 'dot')
+				.attr('cx', width+20)
+				.attr('cy', 10)
+				.attr('r', 2.5)
+			svg.append('text')
+				.attr('class', 'right-legend')
+				.attr('x', width+35)
+				.attr('y', 10+4)
+				.text('daily')
+			svg.append('line')
+				.attr('class', 'line-baseline')
+				.attr('x1', width+10)
+				.attr('x2', width+30)
+				.attr('y1', 30)
+				.attr('y2', 30)
+			svg.append('text')
+				.attr('class', 'right-legend')
+				.attr('x', width+35)
+				.attr('y', 30+4)
+				.text('baseline')
+			svg.append('line')
+				.attr('class', 'trendline')
+				.attr('x1', width+10)
+				.attr('x2', width+30)
+				.attr('y1', 50)
+				.attr('y2', 50)
+			svg.append('text')
+				.attr('class', 'right-legend')
+				.attr('x', width+35)
+				.attr('y', 50+4)
+				.text('7 day avg')
+			
+			visualize(data, timeframe, place);
+		})
+		
+		d3.select('#placeDiff')
+			.on("change", () => {
+				let dropdown = document.getElementById("placeDiff");
+				place = dropdown.options[dropdown.selectedIndex].value;
+				d3.selectAll("#dataDiff").remove();
+				visualize(data, timeframe, place);
+			});
+
+		// Handle data //
+		// ----------- //
+
+		function visualize(data, timeframe, place) {
+
+			// Y-AXIS
+			svg.append("g")
+				.attr("class", "y axis")
+				.attr("id", "dataDiff")
+				.call(yAxis);
+
+			// LINES
+			let datum = zip(time, weekavg(data[timeframe][place]))
+			svg.append("path")
+				.datum(datum)
+				.attr('class', 'trendline')
+				.attr("id", "dataDiff")
+				.attr('d', valueline)
+			datum = zip(time, data[timeframe][place])
+			svg.append("path")
+				.datum(datum)
+				.attr('class', 'line')
+				.attr("id", "dataDiff")
+				.attr('d', valueline)
+			svg.selectAll("dot")
+				.data(datum)
+				.enter().append("circle")
+				.attr("class", "dot")
+				.attr("id", "dataDiff")
+				.attr("cx", d => x(d[0]))
+				.attr("cy", d => y(d[1]))
+				.attr("r", 2.5)
+				.on('mouseover', mouseover)
+				.on('mousemove', mousemoveDot)
+				.on("mouseout", mouseout);
+		}
+
+		// Handlers
+		function mousemoveDot(d) {
+			tooltiptext = "Date: <b>" + formatDate(d[0]) + "</b><br>" + "Share: <b>" + round(d[1]*100, 1e1) + "%</b>"
+			tooltip
+				.html(tooltiptext)
+				.style("left", (d3.event.pageX) + "px")
+				.style("top", (d3.event.pageY) + "px");
+		}
+		function update0() {
+			d3.selectAll("#dataDiff").remove();
+			timeframe = 'allday';
+			visualize(data, timeframe, place)
+		}
+		function update1() {
+			d3.selectAll("#dataDiff").remove();
+			timeframe = '00';
+			visualize(data, timeframe, place)
+		}
+		function update2() {
+			d3.selectAll("#dataDiff").remove();
+			timeframe = '08';
+			visualize(data, timeframe, place)
+		}
+		function update3() {
+			d3.selectAll("#dataDiff").remove();
+			timeframe = '16';
+			visualize(data, timeframe, place)
+		}
+
+		return {
+			update0: update0,
+			update1: update1,
+			update2: update2,
+			update3: update3,
+		}
+	}
+
+	// Utilities
+	function zip(a, b) {
+		return a.map((e, i) => [e, b[i]]);
+	}
+
+	let instance_diff = diffvis()
+</script>

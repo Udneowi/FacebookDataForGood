@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Staying home Visualization by Ulf Aslak. .vis { margin: 0 auto; height: 370px; } .line-baseline { stroke: black; stroke-width: 1.5; fill: none; stroke-dasharray: 10 5; opacity: 0.2; } .line-horizontal { stroke: #bdc3c7; stroke-width: 1; fill: none; stroke-dasharray: 10 5; } .line { fill: none; stroke: black; stroke-width: 2; stroke-opacity: 0.25; } .trendline { fill: none; stroke: red; stroke-width: 2.5; } .histEvent { stroke: grey; stroke-width: 2; stroke-opacity: 1; } .histEventDot { fill: grey; } ."><meta property="og:title" content="" />
+<meta property="og:description" content="Staying home Visualization by Ulf Aslak. .vis { margin: 0 auto; height: 370px; } .line-baseline { stroke: black; stroke-width: 1.5; fill: none; stroke-dasharray: 10 5; opacity: 0.2; } .line-horizontal { stroke: #bdc3c7; stroke-width: 1; fill: none; stroke-dasharray: 10 5; } .line { fill: none; stroke: black; stroke-width: 2; stroke-opacity: 0.25; } .trendline { fill: none; stroke: red; stroke-width: 2.5; } .histEvent { stroke: grey; stroke-width: 2; stroke-opacity: 1; } .histEventDot { fill: grey; } ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://covid19.compute.dtu.dk/visualizations/how_people_move_staying_home/" />
+<meta property="article:modified_time" content="2020-05-08T10:33:42+02:00" />
+<title>How People Move Staying Home | COVID-19 mobility</title>
+<link rel="icon" href="/favicon.png" type="image/x-icon">
+
+
+<link rel="stylesheet" href="/book.min.e72951d38884f3b48fa43ce2d729bd3729c1122733c26acf563840728c13c88f.css" integrity="sha256-5ylR04iE87SPpDzi1ym9NynBEiczwmrPVjhAcowTyI8=">
+
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" class="hidden" id="menu-control" />
+  <main class="container flex">
+    <aside class="book-menu">
+      
+  <nav>
+<h2 class="book-brand">
+  <a href="/"><img src="/dtu.png" alt="Logo" /><span>COVID-19 mobility</span>
+  </a>
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+  <ul>
+<li><strong><a href="/">Main Page</a></strong></li>
+<li><strong>Posts</strong>
+<!-- raw HTML omitted -->
+<!-- raw HTML omitted -->
+<ul>
+<li><em>May</em>
+<ul>
+<li><a href="/posts/change_in_population_sizes/">11: What&rsquo;s happening in my city?</a></li>
+<li><a href="/posts/population_landscape/">7: Population landscape</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Visualizations</strong>
+<ul>
+<li><em>Where people are</em>
+<ul>
+<li><a href="/visualizations/where_people_are_landscape/">Landscape</a></li>
+<li><a href="/visualizations/where_people_are_going_out/">Going out</a></li>
+<li><a href="/visualizations/where_people_are_change_in_population_size/">Change in population size</a></li>
+<li><a href="/visualizations/where_people_are_population_concentration/">Population distribution</a></li>
+</ul>
+</li>
+<li><em>How people move</em>
+<ul>
+<li><a href="/visualizations/how_people_move_distance_traveled/">Distance traveled</a></li>
+<li><a href="/visualizations/how_people_move_staying_home/"class=active>Staying home</a></li>
+</ul>
+<!-- raw HTML omitted -->
+</li>
+</ul>
+</li>
+<li><strong>Data</strong>
+<ul>
+<li><a href="/data/population_density_maps/">Population Density Maps</a></li>
+<li><a href="/data/movement_maps/">Movement Maps</a>
+<!-- raw HTML omitted --></li>
+</ul>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+</nav>
+
+
+
+
+  <script>(function(){var menu=document.querySelector("aside.book-menu nav");addEventListener("beforeunload",function(event){localStorage.setItem("menu.scrollTop",menu.scrollTop);});menu.scrollTop=localStorage.getItem("menu.scrollTop");})();</script>
+
+
+ 
+    </aside>
+
+    <div class="book-page">
+      <header class="book-header">
+        
+  <div class="flex align-center justify-between">
+  <label for="menu-control">
+    <img src="/svg/menu.svg" class="book-icon" alt="Menu" />
+  </label>
+
+  <strong>How People Move Staying Home</strong>
+
+  <label for="toc-control">
+    <img src="/svg/toc.svg" class="book-icon" alt="Table of Contents" />
+  </label>
+</div>
+
+
+  
+ 
+      </header>
+
+      
+      
+  <article class="markdown"><h1 id="staying-home"><strong>Staying home</strong></h1>
+<span style="font-size:14px"><em>Visualization by <a href="mailto:ulfaslak@gmail.com">Ulf Aslak</a>.</em></span>
+
+
+
+
+<style type="text/css">
+	.vis {
+		margin: 0 auto;
+		height: 370px;
+	}
+	.line-baseline { 
+		stroke: black;
+		stroke-width: 1.5;
+		fill: none;
+		stroke-dasharray: 10 5;
+		opacity: 0.2;
+	}
+	.line-horizontal { 
+		stroke: #bdc3c7;
+		stroke-width: 1;
+		fill: none;
+		stroke-dasharray: 10 5;
+	}
+	.line { 
+		fill: none;
+		stroke: black;
+		stroke-width: 2;
+		stroke-opacity: 0.25;
+	}
+	.trendline {
+		fill: none; 
+		stroke: red;
+		stroke-width: 2.5;
+	}
+	.histEvent {
+		stroke: grey;
+		stroke-width: 2;
+		stroke-opacity: 1;
+	}
+	.histEventDot {
+		fill: grey;
+	}
+	.dot-baseline {
+		fill: white;
+		stroke: #2c3e50;
+		stroke-width: 2;
+		opacity: 0;
+	}
+	.dot {
+		fill: black;
+		opacity: 0.5;
+	}
+	.legend-label {
+		text-anchor: start;
+		font-weight: 300;
+		cursor: pointer;
+	}
+	.right-legend {
+		font-size: 12px;
+	}
+	.tooltip {	
+		position: absolute;
+		top: 0;
+		line-height: 1;
+		font-weight: 500;
+		padding: 12px;
+		background: rgba(0, 0, 0, 0.8);
+		color: #fff;
+		border-radius: 2px;	
+	}
+	.toggle {
+		-webkit-user-select: none;          
+		-moz-user-select: none;  
+		-ms-user-select: none;  
+		user-select: none;  
+	}
+	.radio-group {
+		position: absolute;
+		border: solid 1px #999999;
+		display: inline-block;
+		border-radius: 5px;
+		overflow: hidden;
+	}
+	.select-place {
+		position: absolute;
+		right: 0px;
+	}
+	.flex {
+		display: flex;
+	}
+</style>
+
+
+
+
+
+
+<div style="max-height: 0px">
+	<svg>
+	  <defs>
+	    <pattern id="lines" height="10" width="10" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+	      <line x1="0" y1="4" x2="10" y2="4" stroke-width="2" stroke="black"/>
+	    </pattern>
+	  </defs>
+	</svg>
+	<svg>
+	  <defs>
+	    <pattern id="thinlines" height="5" width="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+	      <line x1="0" y1="1" x2="10" y2="1" stroke-width="0.5" stroke="grey"/>
+	    </pattern>
+	  </defs>
+	</svg>
+</div>
+
+
+
+
+
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/d3-simple-slider"></script>
+<script src="https://unpkg.com/chroma-js@2.0.3/chroma.min.js"></script>
+
+<script>
+
+	
+	
+	let eventDates = [
+		["2020-03-11 00:00:00", 'PM announces lockdown starting March 16', 'event1'],
+		["2020-03-16 00:00:00", 'Lockdown officially begins', 'event2'],
+		["2020-04-09 00:00:00", 'Skærtorsdag (public holiday during Easter)', 'event3'],
+		["2020-04-10 00:00:00", 'Lockdown relaxations announced', 'event4'],
+		["2020-04-15 00:00:00", 'Child-care soft-reopens', 'event5'],
+		["2020-04-20 00:00:00", 'Small businesses open', 'event6'],
+		["2020-04-27 00:00:00", 'IKEA opens (controversy)', 'event7'],
+		["2020-05-08 00:00:00", 'Great prayer day (public holiday)', 'event8'],
+		
+		
+	]
+
+	let startDate = "2020-03-10 00:00:00";
+
+	
+	let tooltip = d3.select("body").append("div")
+		.attr("class", "tooltip")
+		.style("display", "none");
+
+	
+	let parseDate = d3.timeParse("%Y-%m-%d %H:%M:%S");
+	let formatDate = d3.timeFormat("%e %B");
+
+	
+	let margin = {top: 70, right: 88, bottom: 30, left: 60},
+		figureHeight = 370;
+
+
+
+	
+	
+
+	
+	function mouseover(d) {
+		tooltip.style("display", "inline");
+	}
+
+	function mouseout(d) {
+		tooltip.style("display", "none");
+	}
+
+	function mousemoveHistEvent(d) {
+		tooltip
+			.html("Date: <b>" + formatDate(parseDate(d[0])) + "</b><br>" + d[1] + "</b>")
+			.style("left", (d3.event.pageX) + "px")
+			.style("top", (d3.event.pageY) + "px");
+	}
+
+	
+	function adjustBaseline(datum) {
+		datumy = d3.range(7).map(() => []);
+		datum.forEach((d, i) => {
+		    datumy[i%7].push(d[1]);
+		});
+		datumy = datumy.map(d => d3.mean(d));
+		return datum.map((d, i) => [d[0], datumy[i%7]]);
+	}
+
+	
+	function zip(a, b) {
+		return a.map((e, i) => [e, b[i]]);
+	}
+
+	function round(val, order) {
+		return Math.round(val * order) / order;
+	}
+
+	Date.prototype.addDays = function(n) {
+	    let date = new Date(this.valueOf());
+	    date.setDate(date.getDate() + n);
+	    return date;
+	}
+
+	function weekavg(y) {
+		let y_avg = [];
+		y.forEach((v, i) => {
+			let i0 = Math.max(0, i-3);
+			let i1 = Math.min(y.length-1, i+4);
+			y_avg.push(d3.mean(y.slice(i0, i1)));
+		});
+		return y_avg;
+	}
+</script>
+<p>In the Movement maps dataset, one movement is recorded for each active user. A movement is registered when in time window <em>t</em> - 1 a user spends most of their time in location <em>A</em>, then in time window <em>t</em> spends most of their time in location <em>B</em>, and <em>A</em> ≠ <em>B</em>. If this condition is not met, either because the time of the stay was too short of the user simply didn&rsquo;t move, the length of the movement is set to 0 km.</p>
+<p>It is, therefore, clear that the most likely type of movement to be recorded in the Movement maps are trips between home and work.</p>
+<p>For this visualization we have counted the fraction of the population that spent most of their time during working (10–18) and late-afternoon hours (18–02) in the same tile. Given the constraints in the data due to preprocessing by Facebook, it is best interpreted as <strong>a conservative upper bound on the number of individuals that do not go to work</strong> during the day.</p>
+<p>As such, it says nothing about how people are moving around near their homes. It also does not represent most of the people that work very close to home. Therefore, it is important to reference this figure with care and to understand that it is primarily the relative change compared to the baseline that offers insight.</p>
+<p>Note that there is also a significant portion of municipalities that are not available for inspection. This is because there is not enough data inside these. See &lsquo;<strong>Data</strong> &gt; Movement Maps&rsquo; for notes on data loss due to privacy.</p>
+<p>Also note that this figure is similar to the the one presented in &lsquo;<strong>Visualizations</strong> &gt; <em>Where people stay</em> &gt; Going out&rsquo;. The figures measure essentially the same thing, but from different perspectives using different datasets.</p>
+<div class="flex">
+	<div class="flex"></div>
+	<div>
+		<select id="levelStation">
+			<option value="all"><em>Whole country</em></option>
+			<option value="Aabenraa">Aabenraa</option>
+			<option value="Aalborg">Aalborg</option>
+			<option value="Aarhus">Aarhus</option>
+			<option value="Albertslund">Albertslund</option>
+			
+			
+			<option value="Ballerup">Ballerup</option>
+			<option value="Billund">Billund</option>
+			<option value="Brøndby">Brøndby</option>
+			<option value="Brønderslev">Brønderslev</option>
+			<option value="Dragør">Dragør</option>
+			<option value="Egedal">Egedal</option>
+			<option value="Esbjerg">Esbjerg</option>
+			
+			
+			
+			
+			<option value="Fredensborg">Fredensborg</option>
+			<option value="Fredericia">Fredericia</option>
+			
+			<option value="Frederikshavn">Frederikshavn</option>
+			
+			<option value="Furesø">Furesø</option>
+			<option value="Gentofte">Gentofte</option>
+			<option value="Gladsaxe">Gladsaxe</option>
+			<option value="Glostrup">Glostrup</option>
+			<option value="Greve">Greve</option>
+			
+			<option value="Guldborgsund">Guldborgsund</option>
+			<option value="Haderslev">Haderslev</option>
+			<option value="Halsnæs">Halsnæs</option>
+			
+			<option value="Helsingør">Helsingør</option>
+			<option value="Herlev">Herlev</option>
+			<option value="Herning">Herning</option>
+			<option value="Hillerød">Hillerød</option>
+			<option value="Hjørring">Hjørring</option>
+			<option value="Holbæk">Holbæk</option>
+			<option value="Holstebro">Holstebro</option>
+			<option value="Horsens">Horsens</option>
+			<option value="Hvidovre">Hvidovre</option>
+			<option value="Høje-Taastrup">Høje-Taastrup</option>
+			
+			<option value="Ikast-Brande">Ikast-Brande</option>
+			<option value="Ishøj">Ishøj</option>
+			
+			
+			
+			<option value="Kolding">Kolding</option>
+			<option value="København">København</option>
+			<option value="Køge">Køge</option>
+			
+			
+			
+			<option value="Lolland">Lolland</option>
+			<option value="Lyngby-Taarbæk">Lyngby-Taarbæk</option>
+			
+			
+			
+			
+			<option value="Norddjurs">Norddjurs</option>
+			 
+			<option value="Nyborg">Nyborg</option>
+			<option value="Næstved">Næstved</option>
+			
+			<option value="Odense">Odense</option>
+			
+			<option value="Randers">Randers</option>
+			
+			
+			<option value="Ringsted">Ringsted</option>
+			<option value="Roskilde">Roskilde</option>
+			
+			<option value="Rødovre">Rødovre</option>
+			
+			<option value="Silkeborg">Silkeborg</option>
+			
+			<option value="Skive">Skive</option>
+			<option value="Slagelse">Slagelse</option>
+			
+			
+			
+			
+			<option value="Svendborg">Svendborg</option>
+			
+			
+			<option value="Thisted">Thisted</option>
+			<option value="Tårnby">Tårnby</option>
+			
+			<option value="Vallensbæk">Vallensbæk</option>
+			
+			
+			<option value="Vejle">Vejle</option>
+			
+			<option value="Viborg">Viborg</option>
+			
+			
+		</select>
+	</div>
+</div>
+
+<div class='vis' id="visStation"></div>
+
+
+
+
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+
+<script>
+
+	function stationvis() {
+
+		
+		
+
+		let data, datum, time;
+		let level = "all",
+			mode = 'count';
+
+
+		
+		
+		
+
+		
+		let maindiv = document.getElementById("visStation")
+		let width = maindiv.offsetWidth - margin.left - margin.right,
+			height = figureHeight - margin.top - margin.bottom;
+
+		
+		let x = d3.scaleTime().range([0, width]);
+		let y = d3.scaleLinear().range([height, 0]);
+
+		
+		let xAxis = d3.axisBottom(x);
+		let yAxis = d3.axisLeft(y).ticks(6, ".0%");
+
+		
+		let valueline = d3.line()
+			.x(function(d) { return x(d[0]); })
+			.y(function(d) { return y(d[1]); });
+
+		
+		let svg = d3.select("#visStation")
+			.append("svg")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+			.append("g")
+				.attr("transform", 
+						"translate(" + margin.left + "," + margin.top + ")");
+
+		
+		svg.append("text")
+			.attr("x", width/2)
+			.attr("y", -15)
+			.style("text-anchor", "middle")
+			.style("font-weight", 700)
+			.text("Staying at (or near) home");
+
+		
+		svg.append("text")
+			.attr("x", -60)
+			.attr("y", -15)
+			.attr('class', 'toggle')
+			.attr("id", 'toggleRelativestation')
+			.style("text-anchor", "left")
+			.style("font-weight", 300)
+			.style('cursor', 'pointer')
+			.text("rel")
+			.on('click', handleTextClickStation);
+
+		
+		svg.append("text")
+			.attr("x", -37)
+			.attr("y", -15)
+			.attr('class', 'toggle')
+			.attr("id", "toggleAbsstation")
+			.style("text-anchor", "left")
+			.style("font-weight", 700)
+			.style('cursor', 'pointer')
+			.text("abs")
+			.on('click', handleTextClickStation);
+
+		
+		
+		d3.json("/data/total_stationarity.json").then(function(data_) {
+
+			
+			data = data_;
+
+			
+			time = data._meta.datetime.map(d => parseDate(d));
+			let dt = d3.max(time);
+			let d0 = parseDate(startDate);
+			let n_days = (dt - d0 + 3.6e6) / 86.4e6
+			let time_shown = d3.range(n_days+1).map(n => d0.addDays(n));
+
+			
+			let yrange = [-0.05, 0.3]
+			x.domain(d3.extent(time_shown));
+			y.domain(yrange);
+
+			
+			let idxwknd = d3.range(4, time_shown.length, 7);
+			let dx = x(time[2]) - x(time[0]);
+			let dy = y(yrange[0]) - y(yrange[1]);
+			svg.selectAll('shade')
+				.data(idxwknd)
+				.enter().append("rect")
+				.attr("class", "shade")
+				.attr("x", d => {
+					return d == 0 ? x(time_shown[d]) : x(time_shown[d]) - dx/4
+				})
+				.attr("y", d => y(yrange[1]))
+				.attr("width", d => {
+					if (d == 0 | d == time_shown.length - 2) {
+						return dx * 3/4;
+					} else if (d == time_shown.length - 1) {
+						return dx * 1/4;
+					} else {
+						return dx;
+					}
+				})
+				.attr("height", dy)
+				.style('fill', '#ecf0f1')
+				.style('fill-opacity', 1)
+
+			
+			svg.append('rect')
+				.attr('x', x(time_shown[0]))
+				.attr('y', y(yrange[1]))
+				.attr('width', x(time[0]) - x(time_shown[0]))
+				.attr('height', dy)
+				.attr('fill', 'url(#lines)')
+				.attr('stroke-width', 1.5)
+				.attr('fill-opacity', 0.2)
+			svg.append('text')
+				.attr('x', 10)
+				.attr('y', 20)
+				.style("font-weight", 0)
+				.style("font-size", "12px")
+				.text('NO DATA')
+
+			
+			svg.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis);
+
+			
+			for (let d of eventDates) {  
+				svg.append('line')
+					.attr('class', 'histEvent')
+					.attr('id', d[2] + "station")
+					.attr('x1', x(parseDate(d[0])))
+					.attr('x2', x(parseDate(d[0])))
+					.attr('y1', height)
+					.attr('y2', height)
+				svg.append('circle')
+					.attr('class', 'histEventDot')
+					.attr('cx', x(parseDate(d[0])))
+					.attr('cy', height)
+					.attr('r', 3)
+					.on('mouseover', mouseover)
+					.on('mousemove', () => {
+						mousemoveHistEvent(d);
+						d3.select("#" + d[2] + "station").attr('y2', 0)
+					})
+					.on('mouseout', () => {
+						mouseout();
+						d3.select("#" + d[2] + "station").attr('y2', height)
+					})
+			}
+
+			
+			svg.append('line')
+				.attr('class', 'line')
+				.attr('x1', width+10)
+				.attr('x2', width+30)
+				.attr('y1', 10)
+				.attr('y2', 10)
+			svg.append('circle')
+				.attr('class', 'dot')
+				.attr('cx', width+20)
+				.attr('cy', 10)
+				.attr('r', 2.5)
+			svg.append('text')
+				.attr('class', 'right-legend')
+				.attr('x', width+35)
+				.attr('y', 10+4)
+				.text('daily')
+			svg.append('line')
+				.attr('class', 'line-baseline')
+				.attr('x1', width+10)
+				.attr('x2', width+30)
+				.attr('y1', 30)
+				.attr('y2', 30)
+			svg.append('text')
+				.attr('class', 'right-legend')
+				.attr('x', width+35)
+				.attr('y', 30+4)
+				.text('baseline')
+			svg.append('line')
+				.attr('class', 'trendline')
+				.attr('x1', width+10)
+				.attr('x2', width+30)
+				.attr('y1', 50)
+				.attr('y2', 50)
+			svg.append('text')
+				.attr('class', 'right-legend')
+				.attr('x', width+35)
+				.attr('y', 50+4)
+				.text('7 day avg')
+			
+			visualize(data, level);
+		})
+
+		d3.select('#levelStation')
+			.on("change", () => {
+				let dropdown = document.getElementById("levelStation");
+				level = dropdown.options[dropdown.selectedIndex].value;
+				d3.selectAll("#dataStation").remove();
+				visualize(data, level);
+			});
+
+		
+		
+		function visualize(data, level) {
+
+			if (mode == 'count') {
+				yrange = [0.6, 1.05]
+				y.domain(yrange);
+
+				
+				svg.append("g")
+					.attr("class", "y axis")
+					.attr("id", "dataStation")
+					.call(yAxis);
+
+				
+				datum = zip([parseDate(startDate), ...time], d3.range(time.length+1).map(() => 1))
+				svg.append("path")
+					.datum(datum)
+					.attr('class', 'line-horizontal')
+					.attr("id", "dataStation")
+					.attr('d', valueline)
+
+				
+				svg.append("text")
+					.attr("transform", "rotate(-90)")
+					.attr("y", -40)
+					.attr("x", -height / 2)
+					.attr("id", "dataStation")
+					.style("text-anchor", "middle")
+					.style("font-weight", 500)
+					.text("Share of population");
+
+				
+				datum = zip(time, data[level]['baseline']);
+				datum = adjustBaseline(datum);
+				svg.append("path")
+					.datum(datum)
+					.attr('class', 'line-baseline')
+					.attr("id", "dataStation")
+					.attr('d', valueline)
+				svg.selectAll("dot")
+					.data(datum)
+					.enter().append("circle")
+					.attr("class", "dot-baseline")
+					.attr("id", "dataStation")
+					.attr("cx", d => x(d[0]))
+					.attr("cy", d => y(d[1]))
+					.attr("r", 3.5)
+					.on('mouseover', mouseover)
+					.on('mousemove', mousemoveDot)
+					.on("mouseout", mouseout);
+				datum = zip(time, weekavg(data[level]['crisis']))
+				svg.append("path")
+					.datum(datum)
+					.attr('class', 'trendline')
+					.attr("id", "dataStation")
+					.attr('d', valueline)
+				datum = zip(time, data[level]['crisis'])
+				svg.append("path")
+					.datum(datum)
+					.attr('class', 'line')
+					.attr("id", "dataStation")
+					.attr('d', valueline)
+				svg.selectAll("dot")
+					.data(datum)
+					.enter().append("circle")
+					.attr("class", "dot")
+					.attr("id", "dataStation")
+					.attr("cx", d => x(d[0]))
+					.attr("cy", d => y(d[1]))
+					.attr("r", 2.5)
+					.on('mouseover', mouseover)
+					.on('mousemove', mousemoveDot)
+					.on("mouseout", mouseout);
+
+			} else if (mode == 'relative') {
+				yrange = [-0.05, 0.3]
+				y.domain(yrange);
+
+				
+				svg.append("g")
+					.attr("class", "y axis")
+					.attr("id", "dataStation")
+					.call(yAxis);
+
+				
+				datum = zip([parseDate(startDate), ...time], d3.range(time.length+1).map(() => 0))
+				svg.append("path")
+					.datum(datum)
+					.attr('class', 'line-horizontal')
+					.attr("id", "dataStation")
+					.attr('d', valueline)
+
+				
+				svg.append("text")
+					.attr("transform", "rotate(-90)")
+					.attr("y", -40)
+					.attr("x", -height / 2)
+					.attr("id", "dataStation")
+					.style("text-anchor", "middle")
+					.style("font-weight", 500)
+					.text("Deviation from baseline");
+
+				
+				datum = zip(time, weekavg(data[level]['percent_change']))
+				svg.append("path")
+					.datum(datum)
+					.attr('class', 'trendline')
+					.attr("id", "dataStation")
+					.attr('d', valueline)
+				datum = zip(time, data[level]['percent_change'])
+				svg.append("path")
+					.datum(datum)
+					.attr('class', 'line')
+					.attr("id", "dataStation")
+					.attr('d', valueline)
+				svg.selectAll("dot")
+					.data(datum)
+					.enter().append("circle")
+					.attr("class", "dot")
+					.attr("id", "dataStation")
+					.attr("cx", d => x(d[0]))
+					.attr("cy", d => y(d[1]))
+					.attr("r", 2.5)
+					.on('mouseover', mouseover)
+					.on('mousemove', mousemoveDot)
+					.on("mouseout", mouseout);
+			}
+		}
+
+		
+		
+
+		
+		function mousemoveDot(d) {
+			let tooltiptext;
+			if (mode == 'relative') {
+				tooltiptext = "Date: <b>" + formatDate(d[0]) + "</b><br>" + "Deviation: <b>" + Math.round(d[1]*100*1e1)/1e1 + "%</b>"
+			} else {
+				tooltiptext = "Date: <b>" + formatDate(d[0]) + "</b><br>" + "Population: <b>" + round(d[1] * 100, 1e1) + "%</b>"
+			}
+
+			tooltip
+				.html(tooltiptext)
+				.style("left", (d3.event.pageX) + "px")
+				.style("top", (d3.event.pageY) + "px");
+		}
+		function handleTextClickStation() {
+			if (mode == 'count') {
+				d3.select('#toggleRelativestation')
+					.style('font-weight', 700);
+				d3.select('#toggleAbsstation')
+					.style('font-weight', 300);
+				mode = "relative";
+			} else {
+				d3.select('#toggleRelativestation')
+					.style('font-weight', 300);
+				d3.select('#toggleAbsstation')
+					.style('font-weight', 700);
+				mode = "count";
+			}
+			d3.selectAll("#dataStation").remove();
+			visualize(data, level);
+		}
+		function update0() {
+			d3.selectAll("#dataStation").remove();
+			level = 'all';
+			visualize(data, level);
+		}
+		function update1() {
+			d3.selectAll("#dataStation").remove();
+			level = 'within_kommune';
+			visualize(data, level);
+		}
+		function update2() {
+			d3.selectAll("#dataStation").remove();
+			level = 'within_region';
+			visualize(data, level);
+		}
+
+		return {
+			update0: update0,
+			update1: update1,
+			update2: update2
+		}
+	}
+
+	
+	let instance_station = stationvis()
+</script>
+<blockquote>
+<p><strong>This figure is interactive!</strong> You can:</p>
+<ul>
+<li>Change the municipality displayed using the <strong>dropdown menu</strong>.</li>
+<li>Toggle whether the y-axis displays the absolute measurements (rel<span style="color:white">/</span><strong>abs</strong>) or the deviation from the baseline (<strong>rel</strong><span style="color:white">/</span>abs).</li>
+<li><strong>Hover</strong> the curves to see precise values.</li>
+<li><strong>Hover</strong> the marks on the x-axis to see events.</li>
+</ul>
+</blockquote>
+</article>
+ 
+      
+
+      <footer class="book-footer">
+        
+  <div class="flex justify-between">
+
+
+
+
+
+</div>
+
+ 
+        
+      </footer>
+
+      
+  
+  <div class="book-comments">
+
+</div>
+  
+ 
+
+      <label for="menu-control" class="hidden book-menu-overlay"></label>
+    </div>
+
+    
+  </main>
+
+  
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

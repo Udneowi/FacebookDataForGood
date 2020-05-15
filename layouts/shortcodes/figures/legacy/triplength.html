@@ -1,0 +1,445 @@
+<style type="text/css">
+	.vis-triplength {
+		margin: 0 auto;
+		height: 370px;
+	}
+	.line-baseline-triplength { 
+		stroke: #2c3e50;
+		stroke-width: 1.5;
+		fill: none;
+		stroke-dasharray: 10 5;
+	}
+	.line-triplength { 
+		stroke: #2c3e50;
+		stroke-width: 1.5;
+		fill: none;
+	}
+	.dot-baseline-triplength {
+		fill: white;
+		stroke: #2c3e50;
+		stroke-width: 2;
+	}
+	.dot-triplength {
+		fill: #2c3e50;
+	}
+	.legend-label-triplength {
+		text-anchor: start;
+		font-weight: 300;
+		cursor: pointer;
+	}
+	.tooltip-triplength {	
+		position: absolute;
+		top: 0;
+		line-height: 1;
+		font-weight: 500;
+		padding: 12px;
+		background: rgba(0, 0, 0, 0.8);
+		color: #fff;
+		border-radius: 2px;	
+	}
+	.toggletriplength {
+		-webkit-user-select: none; /* Safari */        
+		-moz-user-select: none; /* Firefox */
+		-ms-user-select: none; /* IE10+/Edge */
+		user-select: none; /* Standard */
+	}
+	input.triplength[type=radio] {
+		position: absolute;
+		visibility: hidden;
+		display: none;
+	}
+
+	label.triplength {
+		color: #222222;
+		display: inline-block;
+		font-size: 12px;
+		font-weight: 500;
+		padding: 0px 5px 0px 5px;
+	}
+
+	input.triplength[type=radio]:checked + label.triplength{
+		color: #ffffff;
+		background: #555555;
+		cursor: pointer;
+	}
+
+	label.triplength + input.triplength[type=radio] + label.triplength {
+		border-left: solid 1px #999999;
+		cursor: pointer;
+	}
+	.radio-group-triplength {
+		position: absolute;
+		border: solid 1px #999999;
+		display: inline-block;
+		border-radius: 5px;
+		overflow: hidden;
+	}
+	.flex {
+		display: flex;
+	}
+</style>
+
+<div class="flex">
+	<div class="flex radio-group-triplength">
+		<input class="triplength" onclick="instance_triplength.update0()" type="radio" id="option-zero-triplength" name="selector-triplength" checked>
+		<label class="triplength" for="option-zero-triplength">Any</label>
+
+		<input class="triplength" onclick="instance_triplength.update1()" type="radio" id="option-one-triplength" name="selector-triplength">
+		<label class="triplength" for="option-one-triplength">Within munic.</label>
+
+		<input class="triplength" onclick="instance_triplength.update2()" type="radio" id="option-two-triplength" name="selector-triplength">
+		<label class="triplength" for="option-two-triplength">Within region</label>
+	</div>
+</div>
+
+<div class='vis-triplength'></div>
+
+<!-- JavaScript -->
+<!-- ---------- -->
+
+<!-- Imports -->
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<!-- Code -->
+<script>
+
+	function triplengthvis() {
+
+		// Globals //
+		// ------- //
+
+		let data, time;
+		let level = "all",
+			mode = 'count';
+
+
+		// ----- //
+		// Setup //
+		// ----- //
+
+		// Dimensions and margins
+		let maindiv = document.getElementsByClassName("vis-triplength")[0]
+		let margin = {top: 70, right: 5, bottom: 30, left: 60},
+			width = maindiv.offsetWidth - margin.left - margin.right,
+			height = figureHeight - margin.top - margin.bottom;
+
+		// Parse the date / time
+		let parseDate = d3.timeParse("%Y-%m-%d %H:%M:%S");
+		let formatDate = d3.timeFormat("%e %B");
+
+		// Set the ranges
+		let x = d3.scaleTime().range([0, width]);
+		let y = d3.scaleLinear().range([height, 0]);
+
+		// Define the axes
+		// let formatPercent = d3.format(".0%");
+		let xAxis = d3.axisBottom(x);
+		let yAxis = d3.axisLeft(y).ticks(5);
+
+		// Define the line
+		let valueline = d3.line()
+			.x(function(d) { return x(d[0]); })
+			.y(function(d) { return y(d[1]); });
+
+		// Define tooltip div
+		let tooltip = d3.select("body").append("div")
+			.attr("class", "tooltip-triplength")
+			.style("display", "none");
+
+		// Adds the svg canvas
+		let svg = d3.select(".vis-triplength")
+			.append("svg")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+			.append("g")
+				.attr("transform", 
+						"translate(" + margin.left + "," + margin.top + ")");
+
+		// TITLE
+		svg.append("text")
+			.attr("x", width/2)
+			.attr("y", -15)
+			.style("text-anchor", "middle")
+			.style("font-weight", 700)
+			.text("Length of trips");
+
+		// Toggle relative
+		svg.append("text")
+			.attr("x", -60)
+			.attr("y", -15)
+			.attr('class', 'toggletriplength')
+			.attr("id", 'toggleRelativetriplength')
+			.style("text-anchor", "left")
+			.style("font-weight", 700)
+			.style('cursor', 'pointer')
+			.text("rel")
+			.on('click', handleTextClickTriplength);
+		// Toggle abs
+		svg.append("text")
+			.attr("x", -37)
+			.attr("y", -15)
+			.attr('class', 'toggletriplength')
+			.attr("id", "toggleAbstriplength")
+			.style("text-anchor", "left")
+			.style("font-weight", 300)
+			.style('cursor', 'pointer')
+			.text("abs")
+			.on('click', handleTextClickTriplength);
+
+		// Start the visualization //
+		// ----------------------- //
+		d3.json("/data/legacy/length_of_displacements.json").then(function(data_) {
+
+			// DATA
+			data = data_;
+
+			// TIME
+			time = data._meta.datetime.map(d => parseDate(d));
+
+			// SCALE
+			let yrange = [0, d3.max(data[level]['length_km_crisis'])*1.2]
+			x.domain(d3.extent(time));
+			y.domain(yrange);
+
+			// SHADES
+			let idxwknd = d3.range(0, time.length, 7);
+			let dx = x(time[2]) - x(time[0]);
+			let dy = y(yrange[0]) - y(yrange[1]);
+
+			svg.selectAll('shade')
+				.data(idxwknd).enter().append("rect")
+				.attr("class", "shade")
+				.attr("x", d => {
+					return d == 0 ? x(time[d]) : x(time[d]) - dx/4
+				})
+				.attr("y", d => y(yrange[1]))
+				.attr("width", d => {
+					if (d == 0 | d == time.length - 2) {
+						return dx * 3/4;
+					} else if (d == time.length - 1) {
+						return dx * 1/4;
+					} else {
+						return dx;
+					}
+				})
+				.attr("height", dy)
+				.style('fill', '#ecf0f1')
+				.style('fill-opacity', 1)
+
+			// X-AXiS
+			svg.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis);
+			
+			visualize(data, level);
+		})
+
+		// Handle data //
+		// ----------- //
+
+		function visualize(data, level) {
+
+			if (mode == 'count') {
+
+				yrange = [0, d3.max([...data[level]['length_km_crisis'], ...data[level]['length_km_baseline']])*1.2]
+				yAxis = d3.axisLeft(y).ticks(6).tickFormat(v => v)
+				y.domain(yrange);
+
+				// Y-AXIS
+				svg.append("g")
+					.attr("class", "y axis")
+					.attr("id", "dataTriplength")
+					.call(yAxis);
+
+				// Y LABEL
+				svg.append("text")
+					.attr("transform", "rotate(-90)")
+					.attr("y", -40)
+					.attr("x", -height / 2)
+					.attr("id", "dataTriplength")
+					.style("text-anchor", "middle")
+					.style("font-weight", 500)
+					.text("Average trip length [km]");
+
+				// LINES AND DOTS
+				let datum = zip(time, data[level]['length_km_baseline'])
+				svg.append("path")
+					.datum(datum)
+					.attr('class', 'line-baseline-triplength')
+					.attr("id", "dataTriplength")
+					.attr('d', valueline)
+				svg.selectAll("dot-triplength")
+					.data(datum)
+					.enter().append("circle")
+					.attr("class", "dot-baseline-triplength")
+					.attr("id", "dataTriplength")
+					.attr("cx", d => x(d[0]))
+					.attr("cy", d => y(d[1]))
+					.attr("r", 3.5)
+					.on('mouseover', d => {
+						mouseoverDot(d);	
+						highlightLine('.line-baseline-triplength');
+					})
+					.on('mousemove', d => {
+						mousemoveDot(d);	
+						highlightLine('.line-baseline-triplength');
+					})
+					.on("mouseout", d => {
+						mouseoutDot(d);	
+						restoreLine('.line-baseline-triplength');
+					});
+				datum = zip(time, data[level]['length_km_crisis'])
+				svg.append("path")
+					.datum(datum)
+					.attr('class', 'line-triplength')
+					.attr("id", "dataTriplength")
+					.attr('d', valueline)
+				svg.selectAll("dot-triplength")
+					.data(datum)
+					.enter().append("circle")
+					.attr("class", "dot-triplength")
+					.attr("id", "dataTriplength")
+					.attr("cx", d => x(d[0]))
+					.attr("cy", d => y(d[1]))
+					.attr("r", 4)
+					.on('mouseover', d => {
+						mouseoverDot(d);	
+						highlightLine('.line-triplength');
+					})
+					.on('mousemove', d => {
+						mousemoveDot(d);	
+						highlightLine('.line-triplength');
+					})
+					.on("mouseout", d => {
+						mouseoutDot(d);	
+						restoreLine('.line-triplength');
+					});
+
+			} else if (mode == 'relative') {
+				yAxis = d3.axisLeft(y).ticks(6, ".0%")
+				yrange = [-1, 1]
+				y.domain(yrange);
+
+				// Y-AXIS
+				svg.append("g")
+					.attr("class", "y axis")
+					.attr("id", "dataTriplength")
+					.call(yAxis);
+
+				// Y LABEL
+				svg.append("text")
+					.attr("transform", "rotate(-90)")
+					.attr("y", -40)
+					.attr("x", -height / 2)
+					.attr("id", "dataTriplength")
+					.style("text-anchor", "middle")
+					.style("font-weight", 500)
+					.text("Deviation from baseline");
+
+				// LINE AND DOT
+				datum = zip(time, data[level]['length_km_percent_change'])
+				svg.append("path")
+					.datum(datum)
+					.attr('class', 'line-triplength')
+					.attr("id", "dataTriplength")
+					.attr('d', valueline)
+				svg.selectAll("dot-triplength")
+					.data(datum)
+					.enter().append("circle")
+					.attr("class", "dot-triplength")
+					.attr("id", "dataTriplength")
+					.attr("cx", d => x(d[0]))
+					.attr("cy", d => y(d[1]))
+					.attr("r", 4)
+					.on('mouseover', mouseoverDot)
+					.on('mousemove', mousemoveDot)
+					.on("mouseout", mouseoutDot);
+			}
+		}
+
+		// Handlers
+		function mouseoverDot(d) {
+			tooltip.style("display", "inline");
+		}
+		function mousemoveDot(d) {
+			tooltip
+				.html("Date: <b>" + formatDate(d[0]) + "</b><br>" + "Deviation: <b>" + Math.round(d[1]*100*1e1)/1e1 + "%</b>")
+				.style("left", (d3.event.pageX - 70) + "px")
+				.style("top", (d3.event.pageY - 65) + "px");
+		}
+		function mousemoveDot(d) {
+			let tooltiptext;
+			if (mode == 'relative') {
+				tooltiptext = "Date: <b>" + formatDate(d[0]) + "</b><br>" + "Deviation: <b>" + round(d[1]*100, 1e1) + "%</b>"
+			} else {
+				tooltiptext = "Date: <b>" + formatDate(d[0]) + "</b><br>" + "Length: <b>" + round(d[1] * 1000, 1e1) + " m</b>"
+			}
+
+			tooltip
+				.html(tooltiptext)
+				.style("left", (d3.event.pageX - 70) + "px")
+				.style("top", (d3.event.pageY - 65) + "px");
+		}
+		function mouseoutDot(d) {
+			tooltip.style("display", "none");
+		}
+		function highlightLine(cls) {
+			d3.select(cls)
+				.style('stroke-width', 2.6)
+		}
+		function restoreLine(cls) {
+			d3.select(cls)
+				.style('stroke-width', 1.5)
+		}
+		function handleTextClickTriplength() {
+			if (mode == 'count') {
+				d3.select('#toggleRelativetriplength')
+					.style('font-weight', 700);
+				d3.select('#toggleAbstriplength')
+					.style('font-weight', 300);
+				mode = "relative";
+			} else {
+				d3.select('#toggleRelativetriplength')
+					.style('font-weight', 300);
+				d3.select('#toggleAbstriplength')
+					.style('font-weight', 700);
+				mode = "count";
+			}
+			d3.selectAll("#dataTriplength").remove();
+			visualize(data, level);
+		}
+		function update0() {
+			d3.selectAll("#dataTriplength").remove();
+			level = 'all';
+			visualize(data, level);
+		}
+		function update1() {
+			d3.selectAll("#dataTriplength").remove();
+			level = 'within_kommune';
+			visualize(data, level);
+		}
+		function update2() {
+			d3.selectAll("#dataTriplength").remove();
+			level = 'within_region';
+			visualize(data, level);
+		}
+
+		return {
+			update0: update0,
+			update1: update1,
+			update2: update2
+		}
+	}
+
+	// Utilities
+	function zip(a, b) {
+		return a.map((e, i) => [e, b[i]]);
+	}
+
+	function round(val, order) {
+		return Math.round(val * order) / order;
+	}
+
+	let instance_triplength = triplengthvis()
+</script>

@@ -1,0 +1,429 @@
+<!-- CSS -->
+<!-- --- -->
+<style type="text/css">
+	.vis-change {
+		margin: 0 auto;
+		height: 370px;
+	}
+	.line-change { 
+		stroke: #2c3e50;
+		stroke-width: 1.5;
+		fill: none;
+	}
+	.dot-change {
+		fill: #2c3e50;
+	}
+	.legend-label-change {
+		text-anchor: start;
+		font-weight: 300;
+		cursor: pointer;
+	}
+	.tooltip-change {	
+		position: absolute;
+		top: 0;
+		line-height: 1;
+		font-weight: 500;
+		padding: 12px;
+		background: rgba(0, 0, 0, 0.8);
+		color: #fff;
+		border-radius: 2px;		
+	}
+	input.change[type=radio] {
+		position: absolute;
+		visibility: hidden;
+		display: none;
+	}
+
+	label.change {
+		color: #222222;
+		display: inline-block;
+		font-size: 12px;
+		font-weight: 500;
+		padding: 0px 5px 0px 5px;
+	}
+
+	input.change[type=radio]:checked + label.change{
+		color: #ffffff;
+		background: #555555;
+		cursor: pointer;
+	}
+
+	label.change + input.change[type=radio] + label.change {
+		border-left: solid 1px #999999;
+		cursor: pointer;
+	}
+	.radio-group-change {
+		position: absolute;
+		border: solid 1px #999999;
+		display: inline-block;
+		border-radius: 5px;
+		overflow: hidden;
+	}
+	.select-place-change {
+		position: absolute;
+		right: 0px;
+	}
+	.flex {
+		display: flex;
+	}
+</style>
+
+<!-- HTML -->
+<!-- ---- -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Div that SVG objects are appended to -->
+<div class="flex">
+	<div class="flex radio-group-change">
+		<input class="change" onclick="instance_change.update0()" type="radio" id="option-zero-change" name="selector-change" checked>
+		<label class="change" for="option-zero-change">All day</label>
+		<input class="change" onclick="instance_change.update1()" type="radio" id="option-one-change" name="selector-change">
+		<label class="change" for="option-one-change">02–10</label>
+		<input class="change" onclick="instance_change.update2()" type="radio" id="option-two-change" name="selector-change">
+		<label class="change" for="option-two-change">10–18</label>
+		<input class="change" onclick="instance_change.update3()" type="radio" id="option-three-change" name="selector-change">
+		<label class="change" for="option-three-change">18–02</label>
+	</div>
+	<div class="select-place-change">
+		<select id="placeChange">
+			<option value="Aabenraa">Aabenraa</option>
+			<option value="Aalborg">Aalborg</option>
+			<option value="Aarhus">Aarhus</option>
+			<option value="Albertslund">Albertslund</option>
+			<option value="Allerød">Allerød</option>
+			<option value="Assens">Assens</option>
+			<option value="Ballerup">Ballerup</option>
+			<option value="Billund">Billund</option>
+			<option value="Brøndby">Brøndby</option>
+			<option value="Brønderslev">Brønderslev</option>
+			<option value="Dragør">Dragør</option>
+			<option value="Egedal">Egedal</option>
+			<option value="Esbjerg">Esbjerg</option>
+			<option value="Faaborg-Midtfyn">Faaborg-Midtfyn</option>
+			<option value="Fanø">Fanø</option>
+			<option value="Favrskov">Favrskov</option>
+			<option value="Faxe">Faxe</option>
+			<option value="Fredensborg">Fredensborg</option>
+			<option value="Fredericia">Fredericia</option>
+			<option value="Frederiksberg">Frederiksberg</option>
+			<option value="Frederikshavn">Frederikshavn</option>
+			<option value="Frederikssund">Frederikssund</option>
+			<option value="Furesø">Furesø</option>
+			<option value="Gentofte">Gentofte</option>
+			<option value="Gladsaxe">Gladsaxe</option>
+			<option value="Glostrup">Glostrup</option>
+			<option value="Greve">Greve</option>
+			<option value="Gribskov">Gribskov</option>
+			<option value="Guldborgsund">Guldborgsund</option>
+			<option value="Haderslev">Haderslev</option>
+			<option value="Halsnæs">Halsnæs</option>
+			<option value="Hedensted">Hedensted</option>
+			<option value="Helsingør">Helsingør</option>
+			<option value="Herlev">Herlev</option>
+			<option value="Herning">Herning</option>
+			<option value="Hillerød">Hillerød</option>
+			<option value="Hjørring">Hjørring</option>
+			<option value="Holbæk">Holbæk</option>
+			<option value="Holstebro">Holstebro</option>
+			<option value="Horsens">Horsens</option>
+			<option value="Hvidovre">Hvidovre</option>
+			<option value="Høje-Taastrup">Høje-Taastrup</option>
+			<option value="Hørsholm">Hørsholm</option>
+			<option value="Ikast-Brande">Ikast-Brande</option>
+			<option value="Ishøj">Ishøj</option>
+			<option value="Jammerbugt">Jammerbugt</option>
+			<option value="Kalundborg">Kalundborg</option>
+			<option value="Kerteminde">Kerteminde</option>
+			<option value="Kolding">Kolding</option>
+			<option value="København" selected="selected">København</option>
+			<option value="Køge">Køge</option>
+			<option value="Langeland">Langeland</option>
+			<option value="Lejre">Lejre</option>
+			<option value="Lemvig">Lemvig</option>
+			<option value="Lolland">Lolland</option>
+			<option value="Lyngby-Taarbæk">Lyngby-Taarbæk</option>
+			<option value="Læsø">Læsø</option>
+			<option value="Mariagerfjord">Mariagerfjord</option>
+			<option value="Middelfart">Middelfart</option>
+			<option value="Morsø">Morsø</option>
+			<option value="Norddjurs">Norddjurs</option>
+			<option value="Nordfyns">Nordfyns</option>
+			<option value="Nyborg">Nyborg</option>
+			<option value="Næstved">Næstved</option>
+			<option value="Odder">Odder</option>
+			<option value="Odense">Odense</option>
+			<option value="Odsherred">Odsherred</option>
+			<option value="Randers">Randers</option>
+			<option value="Rebild">Rebild</option>
+			<option value="Ringkøbing-Skjern">Ringkøbing-Skjern</option>
+			<option value="Ringsted">Ringsted</option>
+			<option value="Roskilde">Roskilde</option>
+			<option value="Rudersdal">Rudersdal</option>
+			<option value="Rødovre">Rødovre</option>
+			<option value="Samsø">Samsø</option>
+			<option value="Silkeborg">Silkeborg</option>
+			<option value="Skanderborg">Skanderborg</option>
+			<option value="Skive">Skive</option>
+			<option value="Slagelse">Slagelse</option>
+			<option value="Solrød">Solrød</option>
+			<option value="Sorø">Sorø</option>
+			<option value="Stevns">Stevns</option>
+			<option value="Struer">Struer</option>
+			<option value="Svendborg">Svendborg</option>
+			<option value="Syddjurs">Syddjurs</option>
+			<option value="Sønderborg">Sønderborg</option>
+			<option value="Thisted">Thisted</option>
+			<option value="Tårnby">Tårnby</option>
+			<option value="Tønder">Tønder</option>
+			<option value="Vallensbæk">Vallensbæk</option>
+			<option value="Varde">Varde</option>
+			<option value="Vejen">Vejen</option>
+			<option value="Vejle">Vejle</option>
+			<option value="Vesthimmerlands">Vesthimmerlands</option>
+			<option value="Viborg">Viborg</option>
+			<option value="Vordingborg">Vordingborg</option>
+			<option value="Ærø">Ærø</option>
+		</select>
+	</div>
+</div>
+<div class='vis-change'></div>
+
+<!-- JavaScript -->
+<!-- ---------- -->
+
+<!-- Imports -->
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<!-- Code -->
+<script>
+
+	function changevis() {
+
+		// Globals //
+		// ------- //
+
+		let data, time;
+		let timeframe = "allday",
+			place = "København";
+
+
+		// ----- //
+		// Setup //
+		// ----- //
+
+		// Dimensions and margins
+		let maindiv = document.getElementsByClassName("vis-change")[0]
+		let width = maindiv.offsetWidth - margin.left - margin.right,
+			height = figureHeight - margin.top - margin.bottom;
+
+		// Parse the date / time
+		let parseDate = d3.timeParse("%Y-%m-%d %H:%M:%S");
+		let formatDate = d3.timeFormat("%e %B");
+
+		// Set the ranges
+		let x = d3.scaleTime().range([0, width]);
+		let y = d3.scaleLinear().range([height, 0]);
+
+		// Define the axes
+		let formatPercent = d3.format(".0%");
+		let xAxis = d3.axisBottom(x);
+		let yAxis = d3.axisLeft(y).ticks(5);
+
+		// Define the line
+		let valueline = d3.line()
+			.x(function(d) { return x(d[0]); })
+			.y(function(d) { return y(d[1]); });
+
+		// Define tooltip div
+		let tooltip = d3.select("body").append("div")
+			.attr("class", "tooltip-change")
+			.style("display", "none");
+
+		// Adds the svg canvas
+		let svg = d3.select(".vis-change")
+			.append("svg")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+			.append("g")
+				.attr("transform", 
+						"translate(" + margin.left + "," + margin.top + ")");
+
+		// TITLE
+		svg.append("text")
+			.attr("x", width/2)
+			.attr("y", -15)
+			.style("text-anchor", "middle")
+			.style("font-weight", 700)
+			.text("Change in population size");
+
+		// Y LABEL
+		svg.append("text")
+			.attr("transform", "rotate(-90)")
+			.attr("y", -45)
+			.attr("x", -height / 2)
+			.style("text-anchor", "middle")
+			.style("font-weight", 500)
+			.text("Deviation from baseline");
+
+
+		// Start the visualization //
+		// ----------------------- //
+		d3.json("/data/difference.json").then(function(data_) {
+
+			// DATA
+			data = data_;
+
+			// TIME
+			time = data._meta._meta.datetime.map(d => parseDate(d));
+
+			// SCALE
+			let yrange = d3.extent(data[timeframe][place]['relative']);
+			x.domain(d3.extent(time));
+			y.domain(yrange);
+
+			// SHADES
+			let idxwknd = d3.range(0, time.length, 7);
+			let dx = x(time[2]) - x(time[0]);
+			let dy = y(yrange[0]) - y(yrange[1]);
+
+			svg.selectAll('shade')
+				.data(idxwknd).enter().append("rect")
+				.attr("class", "shade")
+				.attr("x", d => {
+					return d == 0 ? x(time[d]) : x(time[d]) - dx/4
+				})
+				.attr("y", d => y(yrange[1]))
+				.attr("width", d => {
+					if (d == 0 | d == time.length - 2) {
+						return dx * 3/4;
+					} else if (d == time.length - 1) {
+						return dx * 1/4;
+					} else {
+						return dx;
+					}
+				})
+				.attr("height", dy)
+				.style('fill', '#ecf0f1')
+				.style('fill-opacity', 1)
+
+			// X-AXiS
+			svg.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis);
+			
+			visualize(data, timeframe, place);
+		})
+		
+		d3.select('#placeChange')
+			.on("change", () => {
+				let dropdown = document.getElementById("placeChange");
+				place = dropdown.options[dropdown.selectedIndex].value;
+				d3.selectAll("#dataChange").remove();
+				visualize(data, timeframe, place);
+			});
+
+		// Handle data //
+		// ----------- //
+
+		function visualize(data, timeframe, place) {
+
+			yrange = d3.extent(data[timeframe][place]['relative']);
+			y.domain(yrange);
+
+			// Y-AXIS
+			svg.append("g")
+				.attr("class", "y axis")
+				.attr("id", "dataChange")
+				.call(yAxis);
+
+			// LINES
+			let datum = zip(time, data[timeframe][place]['relative'])
+			svg.append("path")
+				.datum(datum)
+				.attr('class', 'line-change')
+				.attr("id", "dataChange")
+				.attr('d', valueline)
+
+			// SCATTER
+			svg.selectAll("dot-change")
+				.data(datum)
+				.enter().append("circle")
+				.attr("class", "dot-change")
+				.attr("id", "dataChange")
+				.attr("cx", d => x(d[0]))
+				.attr("cy", d => y(d[1]))
+				.attr("r", 4)
+				.on('mouseover', d => {
+					mouseoverDot(d);
+				})
+				.on('mousemove', d => {
+					mousemoveDot(d);
+				})
+				.on("mouseout", d => {
+					mouseoutDot(d);
+				});
+		}
+
+		// Handlers
+		function mouseoverDot(d) {
+			tooltip.style("display", "inline");
+		}
+		function mousemoveDot(d) {
+			tooltip
+				.html("Date: <b>" + formatDate(d[0]) + "</b><br>" + "Deviation: <b>" + Math.round(d[1]*100*1e1)/1e1 + "%</b>")
+				.style("left", (d3.event.pageX - 70) + "px")
+				.style("top", (d3.event.pageY - 65) + "px");
+		}
+		function mouseoutDot(d) {
+			tooltip.style("display", "none");
+		}
+
+		function update0() {
+			d3.selectAll("#dataChange").remove();
+			timeframe = 'allday';
+			visualize(data, timeframe, place)
+		}
+		function update1() {
+			d3.selectAll("#dataChange").remove();
+			timeframe = '00';
+			visualize(data, timeframe, place)
+		}
+		function update2() {
+			d3.selectAll("#dataChange").remove();
+			timeframe = '08';
+			visualize(data, timeframe, place)
+		}
+		function update3() {
+			d3.selectAll("#dataChange").remove();
+			timeframe = '16';
+			visualize(data, timeframe, place)
+		}
+
+		return {
+			update0: update0,
+			update1: update1,
+			update2: update2,
+			update3: update3,
+		}
+	}
+
+	// Utilities
+	function zip(a, b) {
+		return a.map((e, i) => [e, b[i]]);
+	}
+
+	let instance_change = changevis()
+</script>
+
+
+
+
+
+
+
+
+
+
+

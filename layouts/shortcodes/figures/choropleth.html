@@ -1,0 +1,85 @@
+<!-- HTML -->
+<!-- ---- -->
+
+<div class='vis' id='vis-choropleth'></div>
+
+
+<!-- JavaScript -->
+<!-- ---------- -->
+
+<!-- Imports -->
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<!-- Code -->
+<script>
+
+	function choroplethvis() {
+
+		// Globals //
+		// ------- //
+
+		let data;
+
+
+		// ----- //
+		// Setup //
+		// ----- //
+
+		// Dimensions and margins
+		let maindiv = document.getElementById("vis-choropleth")
+		let margin_ = {top: 70, right: 5, bottom: 30, left: 60},
+			width = maindiv.offsetWidth - margin_.left - margin_.right,
+			height = 620 - margin_.top - margin_.bottom;
+
+		// Adds the svg canvas
+		let svg = d3.select("#vis-choropleth")
+			.append("svg")
+				.attr("width", width + margin_.left + margin_.right)
+				.attr("height", height + margin_.top + margin_.bottom)
+			.append("g")
+				.attr("transform", 
+						"translate(" + margin_.left + "," + margin_.top + ")");
+
+		// Add scaling
+		let x = d3.scaleLinear().domain([7.9, 15.3]).range([0, width]);
+		let y = d3.scaleLinear().domain([54.53, 57.82]).range([height, 0]);
+
+		// Start the visualization //
+		// ----------------------- //
+		d3.json("/data/geojson_dk.json").then(function(data_) {
+
+			// DATA
+			data = data_;
+			
+			visualize(data);
+		})
+
+		// Handle data //
+		// ----------- //
+
+		function visualize(data) {
+			for (let datum of data) {
+				svg.selectAll(datum.kommune)
+					.data(datum.polygons)
+					.enter().append("polygon")
+				    .attr("points", d => d.map(p => [x(p[0]), y(p[1])].join(",")).join(" "))
+				    .attr("id", datum.kommune)
+				    .style('stroke', 'black')
+				    .style('stroke-width', 0.5)
+				    .style('fill', '#95a5a6')
+					.style('fill-opacity', 1);
+			}
+			// Bornholm rect
+			svg.append('rect')
+				.attr('x', x(11.908936))
+				.attr('y', y(57.371392))
+				.attr('width', x(15.219772) - x(14.616187))
+				.attr('height', y(54.948954) - y(55.348487))
+				.attr('fill', 'none')
+				.attr('stroke', 'black')
+				.attr('stroke-width', 1.5)
+		}
+	}
+
+	let instance_choropleth = choroplethvis()
+</script>

@@ -1,0 +1,285 @@
+<!-- CSS -->
+<!-- --- -->
+<style type="text/css">
+	.vis-summer {
+		margin: 0 auto;
+		height: 370px;
+	}
+	.line-summer { 
+		stroke: #2c3e50;
+		stroke-width: 1.5;
+		fill: none;
+	}
+	.dot-summer {
+		fill: #2c3e50;
+	}
+	.area-summer {
+	  	fill: #ecf0f1;
+	}
+	.legend-label-summer {
+		text-anchor: start;
+		font-weight: 300;
+		cursor: pointer;
+	}
+	.tooltip-summer {	
+		position: absolute;
+		top: 0;
+		line-height: 1;
+		font-weight: 500;
+		padding: 12px;
+		background: rgba(0, 0, 0, 0.8);
+		color: #fff;
+		border-radius: 2px;		
+	}
+	input.summer[type=radio] {
+		position: absolute;
+		visibility: hidden;
+		display: none;
+	}
+
+	label.summer {
+		color: #222222;
+		display: inline-block;
+		font-size: 12px;
+		font-weight: 500;
+		padding: 0px 5px 0px 5px;
+	}
+
+	input.summer[type=radio]:checked + label.summer{
+		color: #ffffff;
+		background: #555555;
+		cursor: pointer;
+	}
+
+	label.summer + input.summer[type=radio] + label.summer {
+		border-left: solid 1px #999999;
+		cursor: pointer;
+	}
+	.radio-group-summer {
+		position: absolute;
+		border: solid 1px #999999;
+		display: inline-block;
+		border-radius: 5px;
+		overflow: hidden;
+	}
+	.select-place-summer {
+		position: absolute;
+		right: 0px;
+	}
+	.flex {
+		display: flex;
+	}
+</style>
+
+<!-- HTML -->
+<!-- ---- -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Div that SVG objects are appended to -->
+<div class='vis-summer'></div>
+
+<!-- JavaScript -->
+<!-- ---------- -->
+
+<!-- Imports -->
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+<!-- Code -->
+<script>
+
+	function summervis() {
+
+		// ----- //
+		// Setup //
+		// ----- //
+
+		// Dimensions and margins
+		let maindiv = document.getElementsByClassName("vis-summer")[0]
+		let width = maindiv.offsetWidth - margin.left - margin.right,
+			height = 300 - margin.top - margin.bottom;
+
+		// Set the ranges
+		let x = d3.scaleLinear().range([0, width]);
+		let y = d3.scaleLinear().range([height, 0]);
+
+		// Define the axes
+		let formatPercent = d3.format(".0%");
+		let xAxis = d3.axisBottom(x).tickFormat(formatPercent);
+		let yAxis = d3.axisLeft(y).ticks(5);
+
+		// Define the line
+		let valueline = d3.line()
+			.x(d => x(+d['growth']/100))
+			.y(d => y(+d['median summerhouses/Km2']));
+
+		// Define the shade
+		let area = d3.area()
+			.x(d => x(+d['growth']/100)) 
+			.y0(d => y(+d['p25']))
+			.y1(d => y(+d['p75'])); 
+
+		// Define tooltip div
+		let tooltip = d3.select("body").append("div")
+			.attr("class", "tooltip-summer")
+			.style("display", "none");
+
+		// Adds the svg canvas
+		let svg = d3.select(".vis-summer")
+			.append("svg")
+				.attr("width", width + margin.left + margin.right)
+				.attr("height", height + margin.top + margin.bottom)
+			.append("g")
+				.attr("transform", 
+						"translate(" + margin.left + "," + margin.top + ")");
+
+		// TITLE
+		svg.append("text")
+			.attr("x", width/2)
+			.attr("y", -15)
+			.style("text-anchor", "middle")
+			.style("font-weight", 700)
+			.text("Population growth vs. density of summer houses");
+
+		// X LABEL
+		svg.append("text")
+			.attr("x", width / 2)
+			.attr("y", height + 40)
+			.style("text-anchor", "middle")
+			.style("font-weight", 500)
+			.text("Popuation growth");
+
+		// Y LABEL
+		svg.append("text")
+			.attr("transform", "rotate(-90)")
+			.attr("y", -40)
+			.attr("x", -height / 2)
+			.style("text-anchor", "middle")
+			.style("font-weight", 500)
+			.text("Summer houses per square km");
+
+
+		// Start the visualization //
+		// ----------------------- //
+		d3.csv("/data/summerhouses.csv").then(function(data) {
+
+			// SCALE
+			x.domain(d3.extent(data.map(d => +d['growth']/100)));
+			y.domain([+d3.min(data.map(d => +d['p25'])), +d3.max(data.map(d => d['p75']))]);
+
+			// AXES
+			svg.append("g")
+				.attr("class", "x axis")
+				.attr("transform", "translate(0," + height + ")")
+				.call(xAxis);
+			svg.append("g")
+				.attr("class", "y axis")
+				.attr("id", "dataSummer")
+				.call(yAxis);
+			
+			visualize(data);
+		})
+		
+		// Handle data //
+		// ----------- //
+
+		function visualize(data) {
+			// AREA
+		    svg.append("path")
+			   .datum(data)
+			   .attr("class", "area-summer")
+			   .attr("id", "dataSummer")
+			   .attr("d", area);
+
+			// LINES
+			svg.append("path")
+				.datum(data)
+				.attr('class', 'line-summer')
+				.attr("id", "dataSummer")
+				.attr('d', valueline)
+
+			// SCATTER
+			svg.selectAll("dot-summer")
+				.data(data)
+				.enter().append("circle")
+				.attr("class", "dot-summer")
+				.attr("id", "dataSummer")
+				.attr("cx", d => x(+d['growth']/100))
+				.attr("cy", d => y(+d['median summerhouses/Km2']))
+				.attr("r", 4)
+				.on('mouseover', d => {
+					mouseoverDot(d);
+				})
+				.on('mousemove', d => {
+					mousemoveDot(d);
+				})
+				.on("mouseout", d => {
+					mouseoutDot(d);
+				});
+		}
+
+		// Handlers
+		function mouseoverDot(d) {
+			tooltip.style("display", "inline");
+		}
+		function mousemoveDot(d) {
+			tooltip
+				.html("Growth: <b>" + round(d['growth'], 1e2) + "</b><br>" + "Summer houses per square km: <b>" + round(d['median summerhouses/Km2'], 1e2) + "</b>")
+				.style("left", (d3.event.pageX - 150) + "px")
+				.style("top", (d3.event.pageY - 65) + "px");
+		}
+		function mouseoutDot(d) {
+			tooltip.style("display", "none");
+		}
+
+		function update0() {
+			d3.selectAll("#dataSummer").remove();
+			timeframe = 'allday';
+			visualize(data, timeframe, place)
+		}
+		function update1() {
+			d3.selectAll("#dataSummer").remove();
+			timeframe = '00';
+			visualize(data, timeframe, place)
+		}
+		function update2() {
+			d3.selectAll("#dataSummer").remove();
+			timeframe = '08';
+			visualize(data, timeframe, place)
+		}
+		function update3() {
+			d3.selectAll("#dataSummer").remove();
+			timeframe = '16';
+			visualize(data, timeframe, place)
+		}
+
+		return {
+			update0: update0,
+			update1: update1,
+			update2: update2,
+			update3: update3,
+		}
+	}
+
+	// Utilities
+	function zip(a, b) {
+		return a.map((e, i) => [e, b[i]]);
+	}
+
+	function round(val, precision) {
+		return Math.round(val * precision) / precision
+	}
+
+	let instance_summer = summervis()
+</script>
+
+
+
+
+
+
+
+
+
+
+
