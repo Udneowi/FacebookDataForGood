@@ -4,17 +4,16 @@ headless: true
 
 - **[Main Page]({{< relref "/_index.md" >}})**
 - **Posts**
-	<!-- - *May 14*
-	- *May 13*
-	    - [Back to work]({{< relref "/posts/going_to_work.md" >}})
-	- *May 12*
-	    - [Population re-distributed!]({{< relref "/posts/spread_of_population.md" >}}) -->
+    <!--
     - *May*
+    	- [18: Back to work]({{< relref "/posts/going_to_work.md" >}})
+    	- [14: Population re-distributed!]({{< relref "/posts/spread_of_population.md" >}})
     	- [11: What's happening in my city?]({{< relref "/posts/change_in_population_sizes.md" >}})
     	- [7: Population landscape]({{< relref "/posts/population_landscape.md" >}})
+    -->
 - **Visualizations**
 	- *Where people are*
-		- [Landscape]({{< relref "/visualizations/where_people_are_landscape.md" >}})
+		<!-- - [Landscape]({{< relref "/visualizations/where_people_are_landscape.md" >}})-->
 		- [Going out]({{< relref "/visualizations/where_people_are_going_out.md" >}})
 		- [Change in population size]({{< relref "/visualizations/where_people_are_change_in_population_size.md" >}})
 		- [Population distribution]({{< relref "/visualizations/where_people_are_population_concentration.md" >}})

@@ -45,27 +45,6 @@
 	<div class="select-place">
 		<select id="placeDiff">
 			<option value="country" selected="selected">Within country</option>
-            <option value="Blekinge">Blekinge</option>
-            <option value="Dalarna">Dalarna</option>
-            <option value="Gotland">Gotland</option>
-            <option value="Gävleborg">Gävleborg</option>
-            <option value="Halland">Halland</option>
-            <option value="Jämtland">Jämtland</option>
-            <option value="Jönköping">Jönköping</option>
-            <option value="Kalmar">Kalmar</option>
-            <option value="Kronoberg">Kronoberg</option>
-            <option value="Norrbotten">Norrbotten</option>
-            <option value="Skåne">Skåne</option>
-            <option value="Stockholm">Stockholm</option>
-            <option value="Södermanland">Södermanland</option>
-            <option value="Uppsala">Uppsala</option>
-            <option value="Värmland">Värmland</option>
-            <option value="Västerbotten">Västerbotten</option>
-            <option value="Västernorrland">Västernorrland</option>
-            <option value="Västmanland">Västmanland</option>
-            <option value="Västra Götaland">Västra Götaland</option>
-            <option value="Örebro">Örebro</option>
-            <option value="Östergötland">Östergötland</option>
 		</select>
 	</div>
 </div>
@@ -145,6 +124,21 @@
 
 			// DATA
 			data = data_;
+
+            // Dropdown
+            selector = d3.select("#placeDiff")
+            .selectAll("option")
+            .data(['0'].concat(data["_meta"]["locations"])) // '0' is overwritten by 'all'
+            .enter().append("option")
+            .text(function(d) {return d;
+            })
+            .attr("value", function (d) {
+                return d;
+            })
+            .attr("selected", function (d) {
+                if (d==place) {return 'selected'};
+            });
+
 
 			// TIME
 			time = data._meta.datetime.map(d => parseDate(d));

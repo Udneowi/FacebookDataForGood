@@ -52,11 +52,11 @@ So the first (and trivial) thing to notice can be seen clearly in the figure bel
 
 
 {{< columns >}}
-*Capital region*
-![img](/gini_abs_hovedstaden.png)
-<--->
 *Zealand*
 ![img](/gini_abs_sjaelland.png)
+<--->
+*Capital region*
+![img](/gini_abs_hovedstaden.png)
 {{< /columns >}}
 
 

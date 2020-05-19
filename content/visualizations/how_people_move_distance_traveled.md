@@ -1,7 +1,7 @@
 # **Distance traveled**
 {{< fontsize 14 >}}*Visualization by [Ulf Aslak](mailto:ulfaslak@gmail.com).*{{< /fontsize >}}
 
-{{< figures/globals >}}
+{{< figures/sweden_globals >}}
 
 By averaging the length of trips between tiles we get an estimate of the average distance traveled each day by users in the dataset. During the lockdown we should expect this quantity to be significantly reduced, primarily because people work from home.
 
@@ -13,7 +13,7 @@ It should, at the same time, be understood that this *daily distance traveled pe
 
 Note that there is also a significant portion of municipalities that are not available for inspection. This is because there is not enough data inside these. See '**Data** > Movement Maps' for notes on data loss due to privacy.
 
-{{< figures/total_displacement >}}
+{{< figures/sweden_total_displacement >}}
 
 > **This figure is interactive!** You can:
 > * Change the municipality displayed using the **dropdown menu**.

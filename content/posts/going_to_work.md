@@ -3,7 +3,7 @@ title: Going out/Staying home
 type: post
 ---
 # **Going out/Staying home**
-{{< fontsize 14 >}}*Post by [Jonas Lybker Juul](mailto:jlju@dtu.dk). Published: May 7, 2020.*{{< /fontsize >}}
+{{< fontsize 14 >}}*Post by [Jonas Lybker Juul](mailto:jlju@dtu.dk). Published: May 18, 2020.*{{< /fontsize >}}
 
 {{< vspace 20 >}}
 
@@ -37,9 +37,9 @@ Looking away from the major cities, however, data shows something totally unexpe
 ![img](/goingout-norddjurs.png)
 
 #### **Observation 3: What's up with the weekends?**
-If we pause plotting the absolute numbers of people on the vertical axis and instead focus on relative changes, something spectacular becomes apparent. The figure below shows the relative change of people going out during work hours in Copenhagen. During weekdays, the activity is slowly ramping up -- from -50% in March to -30% last week. But notice the weekends -- the activity is accelerating!  This is probably an artifact of the baseline representing activity in February. In the sweet spring sunshine, Copenhageners are attracted to the always-cozy Copenhagen hotspots such as Dronning Louises Bro and Islands Brygge.
+If we pause plotting the absolute numbers of people on the vertical axis and instead focus on relative changes, something spectacular becomes apparent. The figure below shows the relative change of people going out during work hours. During weekdays, the activity is slowly ramping up -- from -50% in March to -30% last week. But notice the weekends -- the activity is accelerating!  This is probably an artifact of the baseline representing activity in February. In the sweet spring sunshine, Danes are attracted to the always-cozy public parks, and nearby forests.
 
-![img](/goingout-kobenhavn.png)
+![img](/goingout-weekends.png)
 
 #### **Go explore**
 You can explore the [Going out](/visualizations/where_people_are_going_out/) and [Staying home](/visualizations/where_people_are_going_out/) visualizations. For example, see the regional differences for yourself by checking out major cities like Copenhagen and Aarhus and comparing to smaller ones like Holbæk and Guldborgssund. 

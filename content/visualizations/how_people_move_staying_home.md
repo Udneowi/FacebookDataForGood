@@ -1,7 +1,7 @@
 # **Staying home**
 {{< fontsize 14 >}}*Visualization by [Ulf Aslak](mailto:ulfaslak@gmail.com).*{{< /fontsize >}}
 
-{{< figures/globals >}}
+{{< figures/sweden_globals >}}
 
 In the Movement maps dataset, one movement is recorded for each active user. A movement is registered when in time window *t* - 1 a user spends most of their time in location *A*, then in time window *t* spends most of their time in location *B*, and *A* ≠ *B*. If this condition is not met, either because the time of the stay was too short of the user simply didn't move, the length of the movement is set to 0 km.
 
@@ -15,7 +15,7 @@ Note that there is also a significant portion of municipalities that are not ava
 
 Also note that this figure is similar to the the one presented in '**Visualizations** > *Where people stay* > Going out'. The figures measure essentially the same thing, but from different perspectives using different datasets.
 
-{{< figures/total_stationarity >}}
+{{< figures/sweden_total_stationarity >}}
 
 > **This figure is interactive!** You can:
 > * Change the municipality displayed using the **dropdown menu**.
