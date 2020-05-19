@@ -273,7 +273,7 @@
 			}
 
 			if (mode == 'count') {
-				yrange = [-1.2e5, 4e4]
+				yrange = [-0.8e5, 3e4]
 				y.domain(yrange);
 				for (let place_ of Object.keys(data[timeframe])) {
 					let datum = zip(time, d3.range(time.length).map(i => {

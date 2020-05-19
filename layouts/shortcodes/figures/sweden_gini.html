@@ -301,7 +301,8 @@
 			}
 
 			if (mode == 'count') {
-				yrange = [0.49, 0.70];
+				yrange = [d3.min([...data[timeframe][level]['crisis'], ...data[timeframe][level]['baseline']])*0.8, d3.max([...data[timeframe][level]['crisis'], ...data[timeframe][level]['baseline']])*1.2]
+				//yrange = [0.49, 0.70];
 				y.domain(yrange);
 
 				// Y-AXIS

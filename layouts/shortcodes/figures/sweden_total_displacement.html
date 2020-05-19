@@ -319,7 +319,8 @@
 
 			} else if (mode == 'relative') {
 				yAxis = d3.axisLeft(y).ticks(6, ".0%")
-				yrange = [-1, 0.2]
+				//yrange = [-1, 0.2]
+				yrange=[d3.min(data[level]['percent_change'])-0.2,d3.max(data[level]['percent_change'])+0.2]
 				y.domain(yrange);
 
 				// Y-AXIS
